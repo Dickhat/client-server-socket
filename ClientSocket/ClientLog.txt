@@ -1,0 +1,15 @@
+
+
+Connection 31.10.2024 19:42:54
+Server 192.168.0.130:30411
+Message send time 19:43:1
+Message content: first meassage
+Message recieved time 19:43:1
+Message content: b'egassaem tsrif Server written by Bogdanov Daniil Alekseevich M30-411B-21'
+
+Connection 31.10.2024 19:43:3
+Server 192.168.0.130:30411
+Message send time 19:43:8
+Message content: second message
+Message recieved time 19:43:8
+Message content: b'egassem dnoces Server written by Bogdanov Daniil Alekseevich M30-411B-21'

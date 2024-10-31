@@ -1,0 +1,19 @@
+
+
+Server start Thu Oct 31 19:42:50 2024
+
+
+Connection time Thu Oct 31 19:42:54 2024
+Message recieved time Thu Oct 31 19:42:54 2024
+Recieved message:first meassage
+Message send time Thu Oct 31 19:42:54 2024
+Send message:egassaem tsrif Server written by Bogdanov Daniil Alekseevich M30-411B-21
+ Disconnect time Thu Oct 31 19:42:54 2024
+
+
+Connection time Thu Oct 31 19:43:03 2024
+Message recieved time Thu Oct 31 19:43:03 2024
+Recieved message:second message
+Message send time Thu Oct 31 19:43:03 2024
+Send message:egassem dnoces Server written by Bogdanov Daniil Alekseevich M30-411B-21
+ Disconnect time Thu Oct 31 19:43:03 2024
