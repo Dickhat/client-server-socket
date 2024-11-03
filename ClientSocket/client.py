@@ -1,6 +1,8 @@
 import socket
 import time
 import datetime
+import sys
+
 
 sock = socket.socket()
 
@@ -11,8 +13,12 @@ port = 0
 with open('.\\configure.txt', 'r') as conf_file:
     data = conf_file.read().split(':')
 
-    if (data.__len__ != 2):
+    if (len(data) != 2):
         print("\nconfigure file incorrect\n")
+        exit 
+
+    if(len(sys.argv) != 2):
+        print("\nNo input message\n")
         exit 
 
     ip = data[0]
@@ -29,10 +35,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     file.write(f"\n\nConnection {cur_time.day}.{cur_time.month}.{cur_time.year} {cur_time.hour}:{cur_time.minute}:{cur_time.second}")
     file.write(f"\nServer {ip}:{port}")
 
-    time.sleep(2)
+    #time.sleep(2)
 
     # Отправка серверу данных
-    send_str = input()
+    send_str = sys.argv[1]
     sock.sendall(send_str.encode('UTF-8'))
 
     # Запись времени отправки
