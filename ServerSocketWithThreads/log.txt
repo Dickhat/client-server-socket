@@ -1,0 +1,19 @@
+
+
+Server start Sun Nov  3 21:30:22 2024
+
+
+Connection time Sun Nov  3 21:30:40 2024
+Message recieved time Sun Nov  3 21:30:40 2024
+Recieved message:213123
+
+Connection time Sun Nov  3 21:30:41 2024
+Message recieved time Sun Nov  3 21:30:41 2024
+Recieved message:aweadas
+Message send time Sun Nov  3 21:30:40 2024
+Send message:321312 Server written by Bogdanov Daniil Alekseevich M30-411B-21
+ Disconnect time Sun Nov  3 21:30:40 2024
+
+Message send time Sun Nov  3 21:30:41 2024
+Send message:sadaewa Server written by Bogdanov Daniil Alekseevich M30-411B-21
+ Disconnect time Sun Nov  3 21:30:41 2024
