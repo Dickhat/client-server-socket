@@ -128,8 +128,6 @@ int main()
                 break;
         }
 
-        Sleep(5990);
-
         // Провека отработал какой-либо из потоков
         for (auto cur = ThreadL.begin(); cur != ThreadL.end(); cur++)
         {
