@@ -6,18 +6,15 @@
 #include <list>
 #include <ctime>
 #include <semaphore>
-//#include <windows.h>
 #include <WinSock2.h>
 #pragma comment(lib, "Ws2_32.lib")
 
-
+// Обработка запросов клиентов
 DWORD WINAPI ClientThreadProc(LPVOID lpParam);
 
 HANDLE checkThreadSem = CreateSemaphore(NULL, 1, 1, NULL);
 HANDLE WriteFileSem = CreateSemaphore(NULL, 1, 1, NULL);
 std::fstream logFile;
-
-int id = 0;
 
 int main()
 {
@@ -80,10 +77,13 @@ int main()
     ReleaseSemaphore(WriteFileSem, 1, NULL);
 
     SOCKET* clientSocket = new SOCKET{};// Сокет для клиентов
+
     std::list<HANDLE> ThreadL;          // Список работающих потоков
     int TotalThreads = 10;              // Max работающих потоков
+
     DWORD semRet;                       // Итог ситуации захвата семафора
-    
+    DWORD threadCheck;                  // Итог проверки окончания работы потока
+
     while (true)
     {
         // Прослушивание входящих подключений
@@ -128,7 +128,28 @@ int main()
                 break;
         }
 
-        // Добавить проверку что поток отработал
+        Sleep(5990);
+
+        // Провека отработал какой-либо из потоков
+        for (auto cur = ThreadL.begin(); cur != ThreadL.end(); cur++)
+        {
+            threadCheck = WaitForSingleObject(*cur, 0);
+
+            switch (threadCheck)
+            {
+                case WAIT_OBJECT_0:
+                {
+                    CloseHandle(*cur);
+                    ThreadL.erase(cur);
+                }
+
+                default:
+                    break;
+            }
+
+            if (ThreadL.size() == 0)
+                break;
+        }
     }
 
     closesocket(serverSocket);
@@ -139,17 +160,15 @@ int main()
 DWORD WINAPI ClientThreadProc(LPVOID lpParam)
 {
     SOCKET clientSocket = *reinterpret_cast<SOCKET*>(lpParam);
-
     time_t timestamp;
-
-    int SessionId = -1;
 
     // Время подключения
     time(&timestamp);
+    int SessionId = timestamp;
+
     WaitForSingleObject(WriteFileSem, INFINITE);
-    id++;
-    std::cout << "\n Клиент " << id << " подключился\n";
-    logFile << "\n\nConnection time " << ctime(&timestamp);
+    logFile << "\n Client " << SessionId << " connected\n";
+    logFile << "Connection time " << ctime(&timestamp);
     ReleaseSemaphore(WriteFileSem, 1, NULL);
 
     char recvbuf[1024];
@@ -161,11 +180,7 @@ DWORD WINAPI ClientThreadProc(LPVOID lpParam)
 
     int byteRecv = 0;
     int byteSend = 0;
-    // Время получения сообщения
-    time(&timestamp);
-    WaitForSingleObject(WriteFileSem, INFINITE);
-    logFile << "Message recieved time " << ctime(&timestamp) << "Recieved message:";
-    ReleaseSemaphore(WriteFileSem, 1, NULL);
+    bool FisrtPartMessage = true;
 
     std::string response;
 
@@ -173,12 +188,24 @@ DWORD WINAPI ClientThreadProc(LPVOID lpParam)
     while (true) {
         byteRecv = recv(clientSocket, recvbuf, 1024, 0);
 
-        response.append(std::string(recvbuf, byteRecv));
-        logFile << recvbuf;
+        // Время получения первого сообщения
+        if (FisrtPartMessage)
+        {
+            time(&timestamp);
+            FisrtPartMessage = false;
+        }
 
+        response.append(std::string(recvbuf, byteRecv));
+        
         if (byteRecv < 1024)
             break;
     }
+
+    // Запись времени первого получения сообщения и всего сообщения
+    WaitForSingleObject(WriteFileSem, INFINITE);
+    logFile << "\n Client " << SessionId << "\nMessage recieved time " << ctime(&timestamp);
+    logFile << "Recieved message: " << recvbuf << std::endl;
+    ReleaseSemaphore(WriteFileSem, 1, NULL);
 
     // Отзеркалирование сообщения
     std::reverse(response.begin(), response.end());
@@ -186,18 +213,22 @@ DWORD WINAPI ClientThreadProc(LPVOID lpParam)
 
     Sleep(5000);  // миллисекунды
 
+    time(&timestamp);
+
+    // Запись времени отправки сообщения клиенту и самого сообщения
     WaitForSingleObject(WriteFileSem, INFINITE);
-    logFile << "\nMessage send time " << ctime(&timestamp) << "Send message:";
+    logFile << "\n Client " << SessionId << std::endl;
+    logFile << "Message send time " << ctime(&timestamp) << "Send message:" << response;
     ReleaseSemaphore(WriteFileSem, 1, NULL);
 
     byteSend = send(clientSocket, response.c_str(), strlen(response.c_str()), 0);
-    
-    WaitForSingleObject(WriteFileSem, INFINITE);
-    logFile << response;
-    ReleaseSemaphore(WriteFileSem, 1, NULL);
 
+    time(&timestamp);
+
+    // Запись времени отключения клиента от сервера и обновление буфера файла
     WaitForSingleObject(WriteFileSem, INFINITE);
-    logFile << "\n Disconnect time " << ctime(&timestamp);
+    logFile << "\n\n Client " << SessionId << std::endl;
+    logFile << "Disconnect time " << ctime(&timestamp);
     logFile.flush();            // Обнуление буфера для отображения данных в файле
     ReleaseSemaphore(WriteFileSem, 1, NULL);
 
