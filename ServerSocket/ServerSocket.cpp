@@ -113,6 +113,9 @@ int main()
                     break;
             }
             
+            Sleep(3000);
+            time(&timestamp);
+
             // Отзеркалирование сообщения
             std::reverse(response.begin(), response.end());
             response.append(" Server written by Bogdanov Daniil Alekseevich M30-411B-21");
