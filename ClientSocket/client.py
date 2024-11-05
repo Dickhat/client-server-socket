@@ -3,7 +3,6 @@ import time
 import datetime
 import sys
 
-
 sock = socket.socket()
 
 ip = 'empty' 
@@ -17,7 +16,7 @@ with open('.\\configure.txt', 'r') as conf_file:
         print("\nconfigure file incorrect\n")
         exit 
 
-    if(len(sys.argv) != 2):
+    if(len(sys.argv) < 2):
         print("\nNo input message\n")
         exit 
 
@@ -35,11 +34,15 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     file.write(f"\n\nConnection {cur_time.day}.{cur_time.month}.{cur_time.year} {cur_time.hour}:{cur_time.minute}:{cur_time.second}")
     file.write(f"\nServer {ip}:{port}")
 
-    #time.sleep(2)
+    time.sleep(2)
+
+    send_str = ""
 
     # Отправка серверу данных
-    send_str = sys.argv[1]
-    sock.sendall(send_str.encode('UTF-8'))
+    for word in sys.argv[1:]:
+        send_str = send_str + " "  + word
+
+    sock.sendall(send_str.encode('utf-8'))
 
     # Запись времени отправки
     cur_time = datetime.datetime.today()
@@ -48,6 +51,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
     # Получение ответа от сервера
     response = sock.recv(4096)
+    
+    #response = response.decode()
     cur_time = datetime.datetime.today()
     file.write(f"\nMessage recieved time {cur_time.hour}:{cur_time.minute}:{cur_time.second}")
     file.write(f"\nMessage content: {response}")
