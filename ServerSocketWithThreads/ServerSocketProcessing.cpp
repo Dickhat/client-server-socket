@@ -202,7 +202,7 @@ DWORD WINAPI ClientThreadProc(LPVOID lpParam)
     // Запись времени первого получения сообщения и всего сообщения
     WaitForSingleObject(WriteFileSem, INFINITE);
     logFile << "\n Client " << SessionId << "\nMessage recieved time " << ctime(&timestamp);
-    logFile << "Recieved message: " << recvbuf << std::endl;
+    logFile << "Recieved message: " << response << std::endl;
     ReleaseSemaphore(WriteFileSem, 1, NULL);
 
     // Отзеркалирование сообщения
