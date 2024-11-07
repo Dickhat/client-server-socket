@@ -139,14 +139,16 @@ int main()
                 {
                     CloseHandle(*cur);
                     ThreadL.erase(cur);
+
+                    cur = ThreadL.begin();
+
+                    if (ThreadL.size() == 0)
+                        break;
                 }
 
                 default:
                     break;
             }
-
-            if (ThreadL.size() == 0)
-                break;
         }
     }
 
@@ -194,7 +196,7 @@ DWORD WINAPI ClientThreadProc(LPVOID lpParam)
         }
 
         response.append(std::string(recvbuf, byteRecv));
-        
+
         if (byteRecv < 1024)
             break;
     }
